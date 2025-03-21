@@ -4,10 +4,10 @@ A simple SpringBoot2 web application demonstrating user login functionality with
 ## About the Project
 This application uses:
 
-Spring Boot 2.7.4 (with embedded Tomcat)
-Spring Security
-Thymeleaf templates
-Java 8
+* Spring Boot 2.7.4 (with embedded Tomcat)
+* Spring Security
+* Thymeleaf templates
+* Java 8
 
 ## How to Run
 ### Prerequisites
