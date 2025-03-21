@@ -11,8 +11,8 @@ This application uses:
 
 ## How to Run
 ### Prerequisites
-Java 8
-Maven
+* Java 8
+* Maven
 
 ### Run Locally
 Clone the repository:
