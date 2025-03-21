@@ -1,0 +1,46 @@
+# Maven build artifacts
+/target/
+
+# Eclipse specific files
+.classpath
+.project
+.settings/
+
+# IntelliJ specific files
+.idea/
+*.iml
+*.iws
+out/
+
+# VSCode specific
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compiled class files
+*.class
+
+# Test reports
+surefire-reports/
+
+# Application properties (optional, if sensitive)
+# Uncomment the next line if you store secrets locally in this file
+# src/main/resources/application.properties
+
+# Generated sources
+/generated-sources/
+/generated-test-sources/
+
+# Backup files
+*.swp
+*~
+*.bak
+
+# Environment config
+.env
+
