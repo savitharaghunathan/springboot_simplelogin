@@ -2,51 +2,59 @@ package com.konveyor.springlogin.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+
 import java.io.IOException;
 import java.util.Set;
 
-@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-            .withUser("user").password(passwordEncoder().encode("userpass")).roles("USER")
-            .and()
-            .withUser("admin").password(passwordEncoder().encode("adminpass")).roles("ADMIN");
-        
-        System.out.println("Encoded userpass: " + passwordEncoder().encode("userpass"));
+    @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withUsername("user")
+                .password(encoder.encode("userpass"))
+                .roles("USER")
+                .build());
+        manager.createUser(User.withUsername("admin")
+                .password(encoder.encode("adminpass"))
+                .roles("ADMIN")
+                .build());
+
+        System.out.println("Encoded userpass: " + encoder.encode("userpass"));
+        return manager;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(org.springframework.security.config.annotation.web.builders.HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/user").hasRole("USER")
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/admin").hasRole("ADMIN")
+                .requestMatchers("/user").hasRole("USER")
                 .anyRequest().permitAll()
-            .and()
-            .formLogin()
+            )
+            .formLogin(form -> form
                 .loginPage("/login").permitAll()
                 .successHandler(customAuthenticationSuccessHandler())
-            .and()
-            .logout().permitAll();
-        
+            )
+            .logout(logout -> logout.permitAll());
+
+        return http.build();
     }
 
     @Bean
